@@ -237,15 +237,15 @@ if __name__ == "__main__":
 
         print("...done.")
     elif "dolphin" in PRETRAIN:
-        dolphin_dataset = load_data_from_binary(
+        train_english = load_data_from_binary(
             os.path.join(DIR_PATH,
                          "data/datasets/Dolphin18K/dolphin.pretraining.p")
         )
 
         # Convert arrays to TensorFlow constants
-        train_eng_const = tf.constant(dolphin_dataset)
+        train_eng_const = tf.constant(train_english)
         train_blk_const = tf.constant(
-            ["" for _ in range(len(dolphin_dataset))]
+            ["" for _ in range(len(train_english))]
         )
 
         # Turn the constants into TensorFlow Datasets
