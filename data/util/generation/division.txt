@@ -1,0 +1,8 @@
+If N1 OB1 on the LOC1 are placed in N2 equal rows how many OB1 are in each row ?, x = N1 / N2
+If N1 OB1 in the LOC1 are lined up with N2 OB1 in each row how many rows are there ?, x = N1 / N2
+How many OB1 can you buy with D3 dollars if one OB1 costs D2 dollars ?, x = D3 / D2
+How many OB1 can you afford with D3 dollars if one OB1 costs D2 dollars ?, x = D3 / D2
+How many OB1 can you afford with $ D3 if one OB1 costs $ D2 ?, x = D3 / D2
+How many OB1 can you buy with $ D3 if one OB1 costs D2 dollars ?, x = D3 / D2
+How many OB1 can you buy with $ D3 if one OB1 costs $ D2 ?, x = D3 / D2
+How many OB1 can you purchase with $ D3 if one OB1 is $ D2 ?, x = D3 / D2

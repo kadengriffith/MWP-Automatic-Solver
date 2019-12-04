@@ -1,0 +1,13 @@
+There are N1 rooms in the LOC1 with N2 OB1 in each room . How many OB1 are there all together ?, x = N1 * N2
+NA1 put N1 OB1 in each container . If there were N2 containers how many OB1 were there all together ?, x = N1 * N2
+On the LOC1 there are N1 OB1 in each row and there are N2 rows . How many OB1 are there all together ?, x = N1 * N2
+If OB1 in the LOC1 are built in N1 rows with N2 OB1 in each row how many OB1 are there all together ?, x = N1 * N2
+NA1 picked N1 OB1 . NA2 picked N2 times as many OB1 . How many OB1 did NA2 pick ?, x = N1 * N2
+NA1 picked up N1 OB1 . NA2 picked up N2 times as many OB1 . How many OB1 did NA2 pick up ?, x = N1 * N2
+There are N1 OB1 in the LOC1 and N2 times that many in the LOC2 . How many OB1 are in the LOC2 ?, x = N1 * N2
+There are N1 OB1 on the LOC1 and N2 times that many on the LOC2 . How many OB1 are on the LOC2 ?, x = N1 * N2
+NA1 collected N1 OB1 . NA2 collected N2 times as many OB1 . How many OB1 did NA2 collect ?, x = N1 * N2
+NA1 picked N1 OB1 . NA2 picked N2 times as many OB1 . How many OB1 did NA2 pick ?, x = N1 * N2
+NA1 used N1 OB1 . NA2 used N2 times as many OB1 . How many OB1 did NA2 use ?, x = N1 * N2
+NA1 gathered N1 OB1 . NA2 gathered N2 times as many OB1 . How many OB1 did NA2 gather ?, x = N1 * N2
+there are N1 bottles in a case of bottled water . a wholesale package contains N2 cases . a delivery truck can hold N3 wholesale packages . how many bottles of water can a delivery truck hold ?, x = N3 * N2 * N1

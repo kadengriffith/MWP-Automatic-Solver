@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# New CUDA Systems
+# docker run --rm -u $(id -u):$(id -g) -v $(pwd):/home/translator -it --gpus device=0 griffith/mwp-automatic-solver bash
+
+# Older CUDA Systems
+# docker run --rm -u $(id -u):$(id -g) -v $(pwd):/home/translator -it --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=0 griffith/mwp-automatic-solver bash
+
+
+# Non-CUDA systems
+docker run --rm -u $(id -u):$(id -g) -v $(pwd):/home/translator -it griffith/mwp-automatic-solver bash
