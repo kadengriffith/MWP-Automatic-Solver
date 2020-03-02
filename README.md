@@ -23,13 +23,13 @@ For consistency, we provide a ready-to-use Docker image in this repo. To downloa
 Build the Docker image by:
 
 ```
-chmod a+x docker-build && ./docker-build
+chmod a+x build-docker && ./build-docker
 ```
 
 OR
 
 ```
-sh docker-build
+sh build-docker
 ```
 
 This command builds the image, and start up a bash environment that we can train and test within. It includes the libraries necessary for running all forms of pretraining (Wikipedia inlcuded). Use the following command after you exit the container and wish to start it again.
@@ -38,7 +38,7 @@ This command builds the image, and start up a bash environment that we can train
 ./run
 ```
 
-The script above is set to mount the working directory and uses GPU0 on your system. Please alter the script to utilize more GPUs if you want to speed up the training process (i.e., -e NVIDIA*VISIBLE_DEVICES=0,1* to use 2 GPUs, on newer versions of CUDA, you will need the --gpus flag. Edit the run script as necessary.).
+The script above is set to mount the working directory and uses GPU0 on your system. Please alter the script to utilize more GPUs if you want to speed up the training process (i.e., `-e NVIDIA*VISIBLE_DEVICES=0,1*` to use 2 GPUs, on newer versions of CUDA, you will need the `--gpus` flag. Edit the run script as necessary.).
 
 #### Step 2
 
