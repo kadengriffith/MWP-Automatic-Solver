@@ -112,7 +112,10 @@ else:
 # The checkpoint file where the trained weights will be saved
 # Only saves on finish
 if not os.path.isdir(f"models/trained/{MODEL_NAME}"):
-    os.mkdir(f"models/trained/{MODEL_NAME}")
+    os.makedirs(f"models/trained/{MODEL_NAME}")
+
+if not os.path.isdir(f"models/tokenizers"):
+    os.makedirs(f"models/tokenizers")
 
 MODEL_PATH = os.path.join(DIR_PATH,
                           f"models/trained/{MODEL_NAME}/")
@@ -144,113 +147,114 @@ if __name__ == "__main__":
     train_text = []
     train_equations = []
 
-    if PRETRAIN == "imdb":
-        print("Getting pretraining data...\n")
-        train_english = []
-        train_english_blanks = []
-
-        # Pretrain on unlabelled english text for more in-depth understanding of english
-        data = tfds.load("imdb_reviews",
-                         data_dir=os.path.join(DIR_PATH,
-                                               'data/tensorflow-datasets/'))
-
-        english_data = tfds.as_numpy(data["train"])
-
-        english_data = list(english_data)
-        random.shuffle(english_data)
-
-        # Produce ~314041 examples of english
-        for sentence in english_data:
-            # Clean up each document in the data
-            text = sentence["text"].decode("utf-8")
-            text = re.sub(r"(<br \/>)+", "\n", text)
-            text = re.sub(r",", " , ", text)
-            text = re.sub(r"\"", " \" ", text)
-            text = re.sub(r"'", " '", text)
-            text = re.sub(r"\. ", " .\n", text)
-            text = re.sub(r"\? ", " ?\n", text)
-            text = re.sub(r"! ", " ! ", text)
-            text = re.sub(r"- ", " - ", text)
-            text = re.sub(r"\+ ", " + ", text)
-            text = re.sub(r"\* ", " * ", text)
-            text = re.sub(r"\/ ", " / ", text)
-
-            for se in text.split('\n'):
-                # Unlabelled english text
-                train_english.append(se.lower())
-                train_english_blanks.append("")
-
-        # Convert arrays to TensorFlow constants
-        train_eng_const = tf.constant(train_english)
-        train_blk_const = tf.constant(train_english_blanks)
-
-        # Turn the constants into TensorFlow Datasets
-        english_dataset = tf.data.Dataset.from_tensor_slices((train_eng_const,
-                                                              train_blk_const))
-
-        print("...done.\n")
-    elif "wikipedia" in PRETRAIN:
-        # To use the wikipedia data, set 'pretrain: wikipedia_lang_dumpdate' in your config.
-        if not os.path.exists(os.path.join(DIR_PATH, "data/wikipedia.sentences.p")):
-            specified_wiki_dump = PRETRAIN.split('_')
-
-            # Download the data if not been downloaded
-            data = WikipediaML(language=specified_wiki_dump[1],
-                               date=specified_wiki_dump[2],
-                               data_dir=f"data/{specified_wiki_dump[1]}_wikipedia").load()
-
+    if not isinstance(PRETRAIN, bool):
+        if PRETRAIN == "imdb":
+            print("Getting pretraining data...\n")
             train_english = []
             train_english_blanks = []
 
-            print("Separating Wikipedia data into sentences...")
+            # Pretrain on unlabelled english text for more in-depth understanding of english
+            data = tfds.load("imdb_reviews",
+                             data_dir=os.path.join(DIR_PATH,
+                                                   'data/tensorflow-datasets/'))
 
-            for number, data in enumerate(data):
-                content = tfds.as_numpy(data["text"])[0].decode("utf-8")
-                content = content.split("\n\n")
+            english_data = tfds.as_numpy(data["train"])
 
-                for sentence in content:
-                    train_english.append(sentence)
+            english_data = list(english_data)
+            random.shuffle(english_data)
+
+            # Produce ~314041 examples of english
+            for sentence in english_data:
+                # Clean up each document in the data
+                text = sentence["text"].decode("utf-8")
+                text = re.sub(r"(<br \/>)+", "\n", text)
+                text = re.sub(r",", " , ", text)
+                text = re.sub(r"\"", " \" ", text)
+                text = re.sub(r"'", " '", text)
+                text = re.sub(r"\. ", " .\n", text)
+                text = re.sub(r"\? ", " ?\n", text)
+                text = re.sub(r"! ", " ! ", text)
+                text = re.sub(r"- ", " - ", text)
+                text = re.sub(r"\+ ", " + ", text)
+                text = re.sub(r"\* ", " * ", text)
+                text = re.sub(r"\/ ", " / ", text)
+
+                for se in text.split('\n'):
+                    # Unlabelled english text
+                    train_english.append(se.lower())
                     train_english_blanks.append("")
 
-            to_binary(os.path.join(DIR_PATH, "data/wikipedia.sentences.p"),
-                      train_english)
-            # A binary of empty strings... Could be better.
-            to_binary(os.path.join(DIR_PATH, "data/wikipedia.blanks.p"),
-                      train_english_blanks)
-            print("Saved Wikipedia sentences.")
-        else:
+            # Convert arrays to TensorFlow constants
+            train_eng_const = tf.constant(train_english)
+            train_blk_const = tf.constant(train_english_blanks)
+
+            # Turn the constants into TensorFlow Datasets
+            english_dataset = tf.data.Dataset.from_tensor_slices((train_eng_const,
+                                                                  train_blk_const))
+
+            print("...done.\n")
+        elif "wikipedia" in PRETRAIN:
+            # To use the wikipedia data, set 'pretrain: wikipedia_lang_dumpdate' in your config.
+            if not os.path.exists(os.path.join(DIR_PATH, "data/wikipedia.sentences.p")):
+                specified_wiki_dump = PRETRAIN.split('_')
+
+                # Download the data if not been downloaded
+                data = WikipediaML(language=specified_wiki_dump[1],
+                                   date=specified_wiki_dump[2],
+                                   data_dir=f"data/{specified_wiki_dump[1]}_wikipedia").load()
+
+                train_english = []
+                train_english_blanks = []
+
+                print("Separating Wikipedia data into sentences...")
+
+                for number, data in enumerate(data):
+                    content = tfds.as_numpy(data["text"])[0].decode("utf-8")
+                    content = content.split("\n\n")
+
+                    for sentence in content:
+                        train_english.append(sentence)
+                        train_english_blanks.append("")
+
+                to_binary(os.path.join(DIR_PATH, "data/wikipedia.sentences.p"),
+                          train_english)
+                # A binary of empty strings... Could be better.
+                to_binary(os.path.join(DIR_PATH, "data/wikipedia.blanks.p"),
+                          train_english_blanks)
+                print("Saved Wikipedia sentences.")
+            else:
+                train_english = load_data_from_binary(
+                    os.path.join(DIR_PATH, "data/wikipedia.sentences.p")
+                )
+                train_english_blanks = load_data_from_binary(
+                    os.path.join(DIR_PATH, "data/wikipedia.blanks.p")
+                )
+                print("Loaded Wikipedia sentences.")
+
+            # Convert arrays to TensorFlow constants
+            train_eng_const = tf.constant(train_english)
+            train_blk_const = tf.constant(train_english_blanks)
+
+            # Turn the constants into TensorFlow Datasets
+            english_dataset = tf.data.Dataset.from_tensor_slices((train_eng_const,
+                                                                  train_blk_const))
+
+            print("...done.")
+        elif "dolphin" in PRETRAIN:
             train_english = load_data_from_binary(
-                os.path.join(DIR_PATH, "data/wikipedia.sentences.p")
+                os.path.join(DIR_PATH,
+                             "data/datasets/Dolphin18K/dolphin.pretraining.p")
             )
-            train_english_blanks = load_data_from_binary(
-                os.path.join(DIR_PATH, "data/wikipedia.blanks.p")
+
+            # Convert arrays to TensorFlow constants
+            train_eng_const = tf.constant(train_english)
+            train_blk_const = tf.constant(
+                ["" for _ in range(len(train_english))]
             )
-            print("Loaded Wikipedia sentences.")
 
-        # Convert arrays to TensorFlow constants
-        train_eng_const = tf.constant(train_english)
-        train_blk_const = tf.constant(train_english_blanks)
-
-        # Turn the constants into TensorFlow Datasets
-        english_dataset = tf.data.Dataset.from_tensor_slices((train_eng_const,
-                                                              train_blk_const))
-
-        print("...done.")
-    elif "dolphin" in PRETRAIN:
-        train_english = load_data_from_binary(
-            os.path.join(DIR_PATH,
-                         "data/datasets/Dolphin18K/dolphin.pretraining.p")
-        )
-
-        # Convert arrays to TensorFlow constants
-        train_eng_const = tf.constant(train_english)
-        train_blk_const = tf.constant(
-            ["" for _ in range(len(train_english))]
-        )
-
-        # Turn the constants into TensorFlow Datasets
-        english_dataset = tf.data.Dataset.from_tensor_slices((train_eng_const,
-                                                              train_blk_const))
+            # Turn the constants into TensorFlow Datasets
+            english_dataset = tf.data.Dataset.from_tensor_slices((train_eng_const,
+                                                                  train_blk_const))
 
     print(f"\nTokenizing data from {DATASET}...\n")
 
@@ -285,7 +289,8 @@ if __name__ == "__main__":
         except:
             pass
 
-    if PRETRAIN == "imdb" or PRETRAIN == "dolphin" or "wikipedia" in PRETRAIN:
+    if isinstance(PRETRAIN, str) and \
+            (PRETRAIN == "imdb" or PRETRAIN == "dolphin" or "wikipedia" in PRETRAIN):
         print(
             f"Set to train with {len(train_english)} examples of unlabelled english.\n"
         )
@@ -435,7 +440,12 @@ if __name__ == "__main__":
     logger.log(f"Adam Params: b1 {BETA_1} b2 {BETA_2} e {EPSILON}\n")
 
     with MIRRORED_STRATEGY.scope():
-        @tf.function
+        train_step_signature = [
+            tf.TensorSpec(shape=(None, None), dtype=tf.int64),
+            tf.TensorSpec(shape=(None, None), dtype=tf.int64),
+        ]
+
+        @tf.function(input_signature=train_step_signature)
         def train_step(inp, tar):
             tar_inp = tar[:, :-1]
             tar_real = tar[:, 1:]

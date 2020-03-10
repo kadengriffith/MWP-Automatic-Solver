@@ -2,7 +2,7 @@
   "dataset": "train_all_prefix.p",
   "test": "prefix",
   "input": false,
-  "pretrain": "dolphin",
+  "pretrain": false,
   "seed": 6271996,
   "model": false,
   "layers": 2,

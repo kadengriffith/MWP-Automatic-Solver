@@ -1,2 +1,3 @@
 data/*.p
+data/*.md
 **/__pycache__

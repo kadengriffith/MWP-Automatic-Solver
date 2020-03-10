@@ -14,6 +14,8 @@ from utils import to_binary
 
 DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
+USE_GENERATED = False
+
 TEST_SPLIT = 0.08
 
 # i.e. "plus" instead of '+'
@@ -39,11 +41,9 @@ AI2 = []
 ILLINOIS = []
 COMMONCORE = []
 MAWPS = []
-FREQUENCY = 5
-DUPLICATION = 6
 
 KEEP_INFIX_PARENTHESIS = True
-MAKE_IND_SETS = False
+MAKE_IND_SETS = True
 
 # Large test sets
 PREFIX_TEST = []
@@ -54,7 +54,15 @@ INFIX_TEST = []
 DATA_STATS = os.path.join(DIR_PATH,
                           "../DATA.md")
 
-random.seed(1234)
+
+with open(os.path.join(DIR_PATH, "../../config.json"), encoding='utf-8-sig') as fh:
+    data = json.load(fh)
+
+settings = dict(data)
+
+# Random seed for shuffling the data
+SEED = settings["seed"]
+random.seed(SEED)
 
 
 def one_sentence_clean(text):
@@ -65,45 +73,28 @@ def one_sentence_clean(text):
     text = re.sub(r",", "", text)
     text = re.sub(r"^\s+", "", text)
     text = text.replace('\n', ' ')
-    text = text.replace('\'', " '")
+    text = text.replace("'", " '")
     text = text.replace('%', ' percent')
     text = text.replace('$', ' $ ')
-    text = text.replace(r"\s+", ' ')
-    text = re.sub(r"  ", " ", text)
+    text = re.sub(r"\.\s+", " . ", text)
+    text = re.sub(r"\s+", ' ', text)
 
     sent = []
-    for word in text.split():
-        val = None
+    for word in text.split(' '):
         try:
-            val = w2n.word_to_num(word)
+            sent.append(str(w2n.word_to_num(word)))
         except:
-            pass
-
-        if val == None:
             sent.append(word)
-        else:
-            sent.append(str(val))
 
-    return " ".join(sent)
-
-
-def remove_point_zero(text):
-    t = re.sub(r"\.0[^0-9]", " ", text)
-    t = re.sub(r"\-", " - ", t)
-    t = re.sub(r"\s+", " ", t)
-    t = re.sub(r"\s+$", "", t)
-    t = re.sub(r"^\s+", "", t)
-
-    return t
+    return ' '.join(sent)
 
 
 def to_lower_case(text):
     # Convert strings to lowercase
     try:
-        text = text.lower()
+        return text.lower()
     except:
-        pass
-    return text
+        return text
 
 
 def remove_variables(lst):
@@ -151,7 +142,7 @@ def transform_AI2():
             # The MWP
             question_text = one_sentence_clean(content[i].strip())
 
-            eq = remove_point_zero(content[i + 2].strip())
+            eq = content[i + 2].strip()
 
             problem = [("question", to_lower_case(question_text)),
                        ("equation", to_lower_case(eq)),
@@ -207,8 +198,6 @@ def transform_CommonCore():
 
                         value = value[0]
 
-                        value = remove_point_zero(value)
-
                         problem.append((desired_key,
                                         to_lower_case(value)))
                     elif key == "lSolutions":
@@ -263,8 +252,6 @@ def transform_Illinois():
                         desired_key = "equation"
 
                         value = value[0]
-
-                        value = remove_point_zero(value)
 
                         problem.append((desired_key,
                                         to_lower_case(value)))
@@ -326,8 +313,6 @@ def transform_MaWPS():
 
                         value = value[0]
 
-                        value = remove_point_zero(value)
-
                         problem.append((desired_key,
                                         to_lower_case(value)))
                     elif key == "lSolutions":
@@ -363,9 +348,6 @@ def transform_custom():
         for problem in file_data:
             if problem != []:
                 problem_list.append(problem)
-
-                # Add the problem to the global list
-                PROBLEM_LIST.append(problem)
                 GENERATED.append(problem)
 
     print(f"-> Retrieved {len(problem_list)} / {len(file_data)} problems.")
@@ -383,7 +365,8 @@ def transform_all_datasets():
     total_datasets.append(transform_CommonCore())
     total_datasets.append(transform_Illinois())
     total_datasets.append(transform_MaWPS())
-    total_datasets.append(transform_custom())
+    if USE_GENERATED and os.path.exists(os.path.join(DIR_PATH, "../gen.p")):
+        total_datasets.append(transform_custom())
 
     return total_datasets
 
@@ -423,63 +406,39 @@ def convert_to(l, t):
     return output
 
 
-def duplicate_in_large_data(l):
-    # Reduce infrequencies
-    # The duplication was not used in testing
-    for i in range(FREQUENCY):
-        for problem in l:
-            PROBLEM_LIST.append(problem)
-
-
-def duplicate_data(l, n):
-    repeat = []
-    for i in range(n):
-        for problem in l:
-            repeat.append(problem)
-
-    return repeat
-
-
 if __name__ == "__main__":
     print("Transforming all original datasets...")
     print("NOTE: Find resulting data binaries in the data folder.")
 
     total_filtered_datasets = transform_all_datasets()
 
-    # Randomize
-    random.shuffle(PROBLEM_LIST)
-
-    random.shuffle(AI2)
-    random.shuffle(COMMONCORE)
-    random.shuffle(ILLINOIS)
-    random.shuffle(MAWPS)
-
     # Split
     AI2_TEST = AI2[:int(len(AI2) * TEST_SPLIT)]
     AI2 = AI2[int(len(AI2) * TEST_SPLIT):]
-    AI2 = duplicate_data(AI2, DUPLICATION)
 
     COMMONCORE_TEST = COMMONCORE[:int(len(COMMONCORE) * TEST_SPLIT)]
     COMMONCORE = COMMONCORE[int(len(COMMONCORE) * TEST_SPLIT):]
-    COMMONCORE = duplicate_data(COMMONCORE, DUPLICATION)
 
     ILLINOIS_TEST = ILLINOIS[:int(len(ILLINOIS) * TEST_SPLIT)]
     ILLINOIS = ILLINOIS[int(len(ILLINOIS) * TEST_SPLIT):]
-    ILLINOIS = duplicate_data(ILLINOIS, DUPLICATION)
 
     MAWPS_TEST = MAWPS[:int(len(MAWPS) * TEST_SPLIT)]
     MAWPS = MAWPS[int(len(MAWPS) * TEST_SPLIT):]
-    MAWPS = duplicate_data(MAWPS, DUPLICATION)
 
-    GENERATED_TEST = GENERATED[:int(len(GENERATED) * TEST_SPLIT)]
-    GENERATED = GENERATED[int(len(GENERATED) * TEST_SPLIT):]
-    GENERATED = duplicate_data(GENERATED, DUPLICATION)
+    if USE_GENERATED:
+        GENERATED_TEST = GENERATED[:int(len(GENERATED) * TEST_SPLIT)]
+        GENERATED = GENERATED[int(len(GENERATED) * TEST_SPLIT):]
+        random.shuffle(GENERATED)
 
     random.shuffle(AI2)
     random.shuffle(COMMONCORE)
     random.shuffle(ILLINOIS)
     random.shuffle(MAWPS)
-    random.shuffle(GENERATED)
+
+    PROBLEM_LIST = AI2 + COMMONCORE + ILLINOIS + MAWPS + GENERATED
+
+    # Randomize
+    random.shuffle(PROBLEM_LIST)
 
     # AI2 testing data
     test_pre_ai2 = convert_to(AI2_TEST, "prefix")
@@ -613,113 +572,66 @@ if __name__ == "__main__":
         to_binary(os.path.join(DIR_PATH, "../train_mawps_infix.p"),
                   inf_mawps)
 
-    # GENERATED testing data
-    test_pre_gen = convert_to(GENERATED_TEST, "prefix")
-    test_pos_gen = convert_to(GENERATED_TEST, "postfix")
-    if KEEP_INFIX_PARENTHESIS:
-        test_inf_gen = remove_variables(GENERATED_TEST)
-        test_inf_gen = test_inf_gen[:len(test_pos_gen)]
-    else:
-        test_inf_gen = convert_to(GENERATED_TEST, "infix")
+    if USE_GENERATED:
+        # GENERATED testing data
+        test_pre_gen = convert_to(GENERATED_TEST, "prefix")
+        test_pos_gen = convert_to(GENERATED_TEST, "postfix")
+        if KEEP_INFIX_PARENTHESIS:
+            test_inf_gen = remove_variables(GENERATED_TEST)
+            test_inf_gen = test_inf_gen[:len(test_pos_gen)]
+        else:
+            test_inf_gen = convert_to(GENERATED_TEST, "infix")
 
-    to_binary(os.path.join(DIR_PATH, "../test_gen_prefix.p"),
-              test_pre_gen)
-    to_binary(os.path.join(DIR_PATH, "../test_gen_postfix.p"),
-              test_pos_gen)
-    to_binary(os.path.join(DIR_PATH, "../test_gen_infix.p"),
-              test_inf_gen)
+        to_binary(os.path.join(DIR_PATH, "../test_gen_prefix.p"),
+                  test_pre_gen)
+        to_binary(os.path.join(DIR_PATH, "../test_gen_postfix.p"),
+                  test_pos_gen)
+        to_binary(os.path.join(DIR_PATH, "../test_gen_infix.p"),
+                  test_inf_gen)
 
-    # GENERATED training data
-    pre_gen = convert_to(GENERATED, "prefix")
-    pos_gen = convert_to(GENERATED, "postfix")
-    if KEEP_INFIX_PARENTHESIS:
-        inf_gen = remove_variables(GENERATED)
-        inf_gen = inf_gen[:len(pos_gen)]
-    else:
-        inf_gen = convert_to(GENERATED, "infix")
+        # GENERATED training data
+        pre_gen = convert_to(GENERATED, "prefix")
+        pos_gen = convert_to(GENERATED, "postfix")
+        if KEEP_INFIX_PARENTHESIS:
+            inf_gen = remove_variables(GENERATED)
+            inf_gen = inf_gen[:len(pos_gen)]
+        else:
+            inf_gen = convert_to(GENERATED, "infix")
 
-    if MAKE_IND_SETS:
-        to_binary(os.path.join(DIR_PATH, "../train_gen_prefix.p"),
-                  pre_gen)
-        to_binary(os.path.join(DIR_PATH, "../train_gen_postfix.p"),
-                  pos_gen)
-        to_binary(os.path.join(DIR_PATH, "../train_gen_infix.p"),
-                  inf_gen)
+        if MAKE_IND_SETS:
+            to_binary(os.path.join(DIR_PATH, "../train_gen_prefix.p"),
+                      pre_gen)
+            to_binary(os.path.join(DIR_PATH, "../train_gen_postfix.p"),
+                      pos_gen)
+            to_binary(os.path.join(DIR_PATH, "../train_gen_infix.p"),
+                      inf_gen)
 
-    # Duplicate data in large training set 5 times
-    duplicate_in_large_data(AI2)
-    duplicate_in_large_data(COMMONCORE)
-    duplicate_in_large_data(ILLINOIS)
-    duplicate_in_large_data(MAWPS)
-    duplicate_in_large_data(GENERATED)
-
-    combined_prefix = pre_ai2 + pre_common + pre_il + pre_mawps + pre_gen
+    combined_prefix = pre_ai2 + pre_common + pre_il + pre_mawps
+    if USE_GENERATED:
+        combined_prefix += pre_gen
     random.shuffle(combined_prefix)
+    print(f"Saving {len(combined_prefix)} mwps to train_all_prefix.p")
     to_binary(os.path.join(DIR_PATH, "../train_all_prefix.p"),
               combined_prefix)
 
-    combined_postfix = pos_ai2 + pos_common + pos_il + pos_mawps + pos_gen
+    combined_postfix = pos_ai2 + pos_common + pos_il + pos_mawps
+    if USE_GENERATED:
+        combined_postfix += pos_gen
     random.shuffle(combined_postfix)
+    print(f"Saving {len(combined_postfix)} mwps to train_all_postfix.p")
     to_binary(os.path.join(DIR_PATH, "../train_all_postfix.p"),
               combined_postfix)
 
-    combined_infix = inf_ai2 + inf_common + inf_il + inf_mawps + inf_gen
+    combined_infix = inf_ai2 + inf_common + inf_il + inf_mawps
+    if USE_GENERATED:
+        combined_infix += inf_gen
     random.shuffle(combined_infix)
     combined_infix = remove_variables(combined_infix)
+    if not KEEP_INFIX_PARENTHESIS:
+        combined_infix = convert_to(combined_infix, "infix")
+    print(f"Saving {len(combined_infix)} mwps to train_all_infix.p")
     to_binary(os.path.join(DIR_PATH, "../train_all_infix.p"),
               combined_infix)
-
-    print(f"A total of {len(PROBLEM_LIST)} problems "
-          + f"have been filtered from {len(total_filtered_datasets)} datasets.")
-
-    print("\nConverting found data to prefix notation...")
-
-    POLISH_CONVERTED_PROBLEM_LIST = convert_to(PROBLEM_LIST, "prefix")
-
-    print(f"A total of {len(POLISH_CONVERTED_PROBLEM_LIST)} prefix "
-          + "problems have been filtered.")
-
-    print("\nSaving prefix data to train_prefix.p file...")
-
-    to_binary(os.path.join(DIR_PATH, "../train_prefix.p"),
-              POLISH_CONVERTED_PROBLEM_LIST)
-
-    print("...done.")
-
-    print("\nConverting found data to postfix notation...")
-
-    REVERSE_POLISH_CONVERTED_PROBLEM_LIST = convert_to(PROBLEM_LIST, "postfix")
-
-    print(f"A total of {len(REVERSE_POLISH_CONVERTED_PROBLEM_LIST)} postfix "
-          + "problems have been filtered.")
-
-    print("\nSaving postfix data to train_postfix.p file...")
-
-    to_binary(os.path.join(DIR_PATH, "../train_postfix.p"),
-              REVERSE_POLISH_CONVERTED_PROBLEM_LIST)
-
-    print("...done.")
-
-    if KEEP_INFIX_PARENTHESIS:
-        CLEAN_INFIX_CONVERTED_PROBLEM_LIST = PROBLEM_LIST
-        CLEAN_INFIX_CONVERTED_PROBLEM_LIST = remove_variables(
-            CLEAN_INFIX_CONVERTED_PROBLEM_LIST
-        )
-    else:
-        print("\nConverting found data to cleaned infix notation...")
-        CLEAN_INFIX_CONVERTED_PROBLEM_LIST = convert_to(PROBLEM_LIST, "infix")
-
-    CLEAN_INFIX_CONVERTED_PROBLEM_LIST = CLEAN_INFIX_CONVERTED_PROBLEM_LIST[:len(
-        REVERSE_POLISH_CONVERTED_PROBLEM_LIST
-    )]
-
-    print(f"\nA total of {len(CLEAN_INFIX_CONVERTED_PROBLEM_LIST)} infix "
-          + "problems have been filtered.")
-
-    print("\nSaving infix data to train_infix.p file...")
-
-    to_binary(os.path.join(DIR_PATH, "../train_infix.p"),
-              CLEAN_INFIX_CONVERTED_PROBLEM_LIST)
 
     print("...done.")
 
