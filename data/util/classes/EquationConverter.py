@@ -4,7 +4,7 @@ import re
 from classes.ExpressionTree import ExpressionTree
 from classes.Stack import Stack
 
-OPERATORS = set(['+', '-', '*', '/', '(', ')', '^'])
+OPERATORS = {'+', '-', '*', '/', '(', ')', '^'}
 PRIORITY = {'+': 2, '-': 2, '*': 3, '/': 3, '^': 4}
 
 

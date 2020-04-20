@@ -1,3 +1,0 @@
-#!/bin/bash
-
-python data/util/generation/generator.py 50000 false && python data/util/create_data.py

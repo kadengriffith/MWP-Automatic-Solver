@@ -1,5 +1,0 @@
-#!/bin/bash
-
-for filename in *.json; do
-    python translator.py $filename
-done

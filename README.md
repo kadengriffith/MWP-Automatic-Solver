@@ -4,9 +4,9 @@
 
 ---
 
-This repo is the home to an automatic solver for math word problems using the 2017 Transformer model. This research was conducted at the University of Colorado Colorado Springs by Kaden Griffith and Jugal Kalita over the Summer in 2019. This research was a part of an undergraduate program through the National Science Foundation. This Transformer arrangement translates a word problem into a useable expression. We did not provide comprehensive code to solve the output, but you can use our _EquationConverter_ class to solve infix expressions via the sympy package. Our best model surpassed state-of-the-art, receiving an average of 86.7% accuracy among all test sets.
+This repo is the home to an automatic solver for math word problems using the 2017 Transformer model. This research was conducted at the University of Colorado Colorado Springs by Kaden Griffith and Jugal Kalita in 2019-2020. This research was a part of an undergraduate program through the National Science Foundation and grant research done through our university. This Transformer arrangement translates a word problem into a useable expression. We did not provide comprehensive code to solve the output. Our best model surpassed state-of-the-art, receiving an average of 86.7% accuracy among all test sets.
 
-This version supports some features that were not used in the publication, mostly because they were not done at the time!
+This version supports some features that were not used in the publication, mostly because they were not done at the time! This repo will soon be updated to use new approaches.
 
 ## Quickstart Guide
 
@@ -23,31 +23,29 @@ For consistency, we provide a ready-to-use Docker image in this repo. To downloa
 Build the Docker image by:
 
 ```
-chmod a+x build-docker && ./build-docker
+chmod a+x build-docker && ./build-docker.sh
 ```
 
 OR
 
 ```
-sh build-docker
+sh build-docker.sh
 ```
 
-This command builds the image, and start up a bash environment that we can train and test within. It includes the libraries necessary for running all forms of pretraining (Wikipedia inlcuded). Use the following command after you exit the container and wish to start it again.
+This command builds the Docker image that we can train and test within. It includes the libraries necessary for running all forms of pretraining. Use the following command if you wish to open a command prompt within the image.
 
 ```
-./run
+./bash.sh
 ```
 
-The script above is set to mount the working directory and uses GPU0 on your system. Please alter the script to utilize more GPUs if you want to speed up the training process (i.e., `-e NVIDIA*VISIBLE_DEVICES=0,1*` to use 2 GPUs, on newer versions of CUDA, you will need the `--gpus` flag. Edit the run script as necessary.).
-
-#### Step 2
+#### Step 2 (Optional if using the build-docker.sh script)
 
 ---
 
-So that we don't require a large download to use this software, compilers and generators exist that need to be used before training your model. Run the following command to both generate 50000 problems using our problem generator and compile the training and test sets we used in our work. We did not end up using the 50000 generated problems in our publication, but they're fun to train with and allow for custom applications if you want to use this code for something else.
+To clean and create the data for your translations use the following:
 
 ```
-./make-data
+./make-data.sh
 ```
 
 Data collected is from [AI2 Arithmetic Questions](https://allenai.org/data/data-all.html), [Common Core](https://cogcomp.org/page/resource_view/98), [Illinois](https://cogcomp.org/page/resource_view/98), and [MaWPS](http://lang.ee.washington.edu/MAWPS/). For more details on these sets, please refer to their authors.
@@ -60,38 +58,54 @@ There are 37 short bushes and 30 tall trees currently in the park. Park workers 
 X = 37 + 20
 ```
 
+Numerous binary files containing training and testing data will be created and housed in the data folder. Depending on your configuration, you will only use some of these files.
+
 #### Step 3
 
 ---
 
 Our approach has tested various vanilla Transformer models. Our most successful model is speedy and uses two Transformer layers.
 
-The trainable model code lives in the translator.py file. This model is similar to the Transformer example discussed in the [TensorFlow online tutorial](https://www.tensorflow.org/beta/tutorials/text/transformer).
+The trainable model code lives in the translator.py file. This model is similar to the Transformer example discussed in the [TensorFlow online tutorial](https://www.tensorflow.org/tutorials/text/transformer).
 
-Everything in the translator.py file is controllable through configuration files. To use this model create a config JSON file like this:
+Everything in the translator.py file is controllable through configuration files. To use this model create a config YAML file like this:
 
 ```
-{
- "dataset": "train_all_prefix.p",
- "test": "prefix",
- "input": false,
- "pretrain": false,
- "seed": 6271996,
- "model": false,
- "layers": 2,
- "heads": 8,
- "d_model": 256,
- "dff": 1024,
- "lr": "scheduled",
- "dropout": 0.1,
- "epochs": 300,
- "batch": 128,
- "beta_1": 0.95,
- "beta_2": 0.99
-}
+# A minimal configuration example
 
-// output to config.json
+dataset: train_all_postfix.p
+duplication: False
+test: postfix
+# Model specification
+model: False
+layers: 2
+heads: 8
+d_model: 256
+dff: 1024
+lr: scheduled
+dropout: 0.1
+# Training
+epochs: 300
+batch: 128
+# Options: "dolphin", "imdb", "wikipedia_en_DUMPNUM"
+pretrain: False
+# Adam optimizer params
+beta_1: 0.95
+beta_2: 0.99
+# Data pre-processing
+pos: False
+pos_words: False
+remove_stopwords: False
+as_lemmas: True
+reorder: False
+tagging: True
+# Other behavior
+input: False
+seed: 420365
+save: True
 ```
+
+There is already a created configuration present in this repo for ease of use.
 
 For pretraining you can set the _pretrain_ setting to `imdb`, `dolphin`, `wikipedia_en_DUMPNUM` (where DUMPNUM is the dump date from [here](https://dumps.wikimedia.org/backup-index.html)), or false.
 
@@ -104,16 +118,24 @@ Testing can occur on specific sets if you use the .p filename for the _test_ fie
 From this point, you can run the following command in the container.
 
 ```
-python translator.py config.json
+python translator.py config.yaml
 ```
 
-Alternatively, you can run the _trial_ script, which iterates over all of the config files found in the root directory and completes all epoch iterations you specify.
+Alternatively, you can run the _trial.sh_ script, which iterates over all of the config files found in the root directory and completes all epoch iterations you specify.
+
+A more user friendly approach that does not require you to use the bash script, is the _run.sh_ script. This executes the _trial.sh_ script inside your image. From your host terminal use the following command:
+
+```
+./run.sh
+```
+
+This script is set to use only 1 GPU device if you are on a CUDA system. There is a comment within the script that shows how you can use a GPU on CUDA <10.1 environments and also how you can customize the GPU device list you want available.
 
 #### Step 5
 
 ---
 
-After training, the program saves your model, and your configuration file is updated to refer to this model. You can train from the checkpoint generated by repeating step 4.
+After training, the program saves your model, and your configuration file is updated to refer to this model in future training/testing. You can train from the checkpoint generated by repeating step 4.
 
 #### Tips
 
@@ -126,3 +148,15 @@ After training, the program saves your model, and your configuration file is upd
 We hope that your interest in math word problems has increased, and encourage any suggestions for future work or bug fixes.
 
 Happy solving!
+
+#### Cite The Paper
+
+```
+@inproceedings{griffith2019solving,
+  title     = {Solving Arithmetic Word Problems Automatically Using Transformer and Unambiguous Representations},
+  author    = {Griffith, Kaden and Kalita, Jugal},
+  booktitle = {Proceedings of the 2019 International Conference on Computational Science and Computational Intelligence (CSCI'19)},
+  pages     = {526--532},
+  year      = {2019}
+}
+```

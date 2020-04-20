@@ -68,23 +68,17 @@ def generate(number, template="random", out_path="../../gen.p", complex_problems
             path_list = [ADDITION, SUBTRACTION, DIVISION, MULTIPLICATION]
 
     opl = path_list
-    with open(NAMES, 'r') as fh:
-        name_list = fh.readlines()
-    with open(LOCATIONS, 'r') as fh:
-        location_list = fh.readlines()
-    with open(OBJECTS, 'r') as fh:
-        object_list = fh.readlines()
-    with open(WORD_NUMBERS, 'r') as fh:
-        word_number_list = fh.readlines()
+    name_list = []
+    location_list = []
+    object_list = []
+    word_number_list = []
     word_operations = ["plus", "minus", "divide", "multiply"]
 
-    path_contents_list = []
-    for path in path_list:
-        with open(path, 'r') as fh:
-            path_contents_list.append([])
-            for line in fh.readlines():
-                sp = line.split(', ')
-                path_contents_list[-1].append((sp[0], sp[1]))
+    with open(WORD_NUMBERS, 'r') as fh:
+        lines = fh.readlines()
+
+        for line in lines:
+            word_number_list.append(line)
 
     progress_new = 0
     for i in range(number):
@@ -92,13 +86,49 @@ def generate(number, template="random", out_path="../../gen.p", complex_problems
         if not i == progress_new or i == 0:
             print(f"Progress: %d%%\r" % progress_new, end="")
 
+        template_list = []
+
         # Determine the type of problem if randomly selected
         problem_type_split = int((number / len(opl)))
         if template == "random":
             if i % problem_type_split == 0 and not i < problem_type_split:
-                path_contents_list = path_contents_list[1:]
+                path_list = path_list[1:]
 
-        question, equation = random.choice(path_contents_list[0])
+        path = path_list[0]
+
+        with open(NAMES, 'r') as fh:
+            lines = fh.readlines()
+
+            for line in lines:
+                name_list.append(line)
+
+        with open(LOCATIONS, 'r') as fh:
+            lines = fh.readlines()
+
+            for line in lines:
+                location_list.append(line)
+
+        with open(OBJECTS, 'r') as fh:
+            lines = fh.readlines()
+
+            for line in lines:
+                object_list.append(line)
+
+        with open(path, 'r') as fh:
+            lines = fh.readlines()
+
+            if template == "random":
+                index = random.randint(0, len(lines) - 1)
+                sp = lines[index].split(', ')
+                template_list.append((sp[0], sp[1]))
+            else:
+                for line in lines:
+                    sp = line.split(', ')
+                    template_list.append((sp[0], sp[1]))
+
+        te = template_list[random.randint(0, len(template_list) - 1)]
+        question = list(te)[0]
+        equation = list(te)[1]
 
         if not WORD_PROBLEMS:
             num1 = get_random(0, 100000)
@@ -181,7 +211,7 @@ def generate(number, template="random", out_path="../../gen.p", complex_problems
         question = re.sub("LOC2", location2, question)
 
         if WORD_PROBLEMS:
-            # Need to replace operators before the numbers are inserted
+            # Need to replace operators befor the numbers are inserted
             # This avoids replacing hyphenated number words
             def pad(what):
                 return " " + what + " "

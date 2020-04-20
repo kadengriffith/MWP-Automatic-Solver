@@ -1,16 +1,15 @@
-from __future__ import absolute_import
+from tensorflow import logical_and, size
+from re import sub
+from pickle import load, dump
 
-import os
-import re
-import pickle
-
-DIR_PATH = os.path.abspath(os.path.dirname(__file__))
+# Data constraints
+MAX_LENGTH = 60
 
 
 def load_data_from_binary(absolute_path):
     # Get the lines in a binary as list
     with open(absolute_path, "rb") as fh:
-        file_data = pickle.load(fh)
+        file_data = load(fh)
 
     return file_data
 
@@ -18,7 +17,7 @@ def load_data_from_binary(absolute_path):
 def to_binary(absolute_path, what):
     # Save to a binary
     with open(absolute_path, 'wb') as fh:
-        pickle.dump(what, fh)
+        dump(what, fh)
 
 
 def get_as_tuple(example):
@@ -30,14 +29,19 @@ def get_as_tuple(example):
 
 def expressionize(what):
     # It may help training if the 'x =' is not learned
-    what = re.sub(r"([a-z] \=|\= [a-z])", "", what)
-    return re.sub(r"^\s+", "", what)
+    what = sub(r"([a-z] \=|\= [a-z])", "", what)
+    return sub(r"^\s+", "", what)
 
 
 def print_epoch(what, clear=False):
     # Overwrite the line to see live updated results
-    print(f"{what}\r", end="")
+    print(f"{what}", end="\r")
 
     if clear:
         # Clear the line being overwritten by print_epoch
         print()
+
+
+def filter_max_length(x, y, max_length=MAX_LENGTH):
+    return logical_and(size(x) <= max_length,
+                       size(y) <= max_length)

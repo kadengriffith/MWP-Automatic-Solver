@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import os
 import sys
+import yaml
 import json
 import pickle
 import re
@@ -16,7 +17,10 @@ DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
 USE_GENERATED = False
 
-TEST_SPLIT = 0.08
+try:
+    TEST_SPLIT = int(sys.argv[2])
+except:
+    TEST_SPLIT = 0.05
 
 # i.e. "plus" instead of '+'
 WORDS_FOR_OPERATORS = False
@@ -54,11 +58,8 @@ INFIX_TEST = []
 DATA_STATS = os.path.join(DIR_PATH,
                           "../DATA.md")
 
-
-with open(os.path.join(DIR_PATH, "../../config.json"), encoding='utf-8-sig') as fh:
-    data = json.load(fh)
-
-settings = dict(data)
+with open(os.path.join(DIR_PATH, f"../../{sys.argv[1]}"), 'r', encoding='utf-8-sig') as yaml_file:
+    settings = yaml.load(yaml_file, Loader=yaml.FullLoader)
 
 # Random seed for shuffling the data
 SEED = settings["seed"]
@@ -87,6 +88,26 @@ def one_sentence_clean(text):
             sent.append(word)
 
     return ' '.join(sent)
+
+
+def formatNumber(num):
+    if float(num) % 1 == 0:
+        return str(int(num))
+    else:
+        return str(num)
+
+
+def remove_point_zero(text):
+    return text
+    # temp = []
+    # for word in text.split(' '):
+    #     try:
+    #         temp.append(formatNumber(word))
+    #     except:
+    #         temp.append(word)
+    # sentence = ' '.join(temp)
+
+    # return re.sub(r"\.0([^0-9])?", ' ', sentence)
 
 
 def to_lower_case(text):
@@ -141,8 +162,9 @@ def transform_AI2():
         if i % 3 == 0 or i == 0:
             # The MWP
             question_text = one_sentence_clean(content[i].strip())
+            question_text = remove_point_zero(question_text)
 
-            eq = content[i + 2].strip()
+            eq = remove_point_zero(content[i + 2].strip())
 
             problem = [("question", to_lower_case(question_text)),
                        ("equation", to_lower_case(eq)),
@@ -190,6 +212,7 @@ def transform_CommonCore():
                         desired_key = "question"
 
                         value = one_sentence_clean(value)
+                        value = remove_point_zero(value)
 
                         problem.append((desired_key,
                                         to_lower_case(value)))
@@ -197,6 +220,8 @@ def transform_CommonCore():
                         desired_key = "equation"
 
                         value = value[0]
+
+                        value = remove_point_zero(value)
 
                         problem.append((desired_key,
                                         to_lower_case(value)))
@@ -245,6 +270,7 @@ def transform_Illinois():
                         desired_key = "question"
 
                         value = one_sentence_clean(value)
+                        value = remove_point_zero(value)
 
                         problem.append((desired_key,
                                         to_lower_case(value)))
@@ -252,6 +278,8 @@ def transform_Illinois():
                         desired_key = "equation"
 
                         value = value[0]
+
+                        value = remove_point_zero(value)
 
                         problem.append((desired_key,
                                         to_lower_case(value)))
@@ -302,6 +330,7 @@ def transform_MaWPS():
                         desired_key = "question"
 
                         value = one_sentence_clean(value)
+                        value = remove_point_zero(value)
 
                         problem.append((desired_key,
                                         to_lower_case(value)))
@@ -312,6 +341,8 @@ def transform_MaWPS():
                         desired_key = "equation"
 
                         value = value[0]
+
+                        value = remove_point_zero(value)
 
                         problem.append((desired_key,
                                         to_lower_case(value)))
@@ -365,7 +396,7 @@ def transform_all_datasets():
     total_datasets.append(transform_CommonCore())
     total_datasets.append(transform_Illinois())
     total_datasets.append(transform_MaWPS())
-    if USE_GENERATED and os.path.exists(os.path.join(DIR_PATH, "../gen.p")):
+    if USE_GENERATED:
         total_datasets.append(transform_custom())
 
     return total_datasets
@@ -408,6 +439,7 @@ def convert_to(l, t):
 
 if __name__ == "__main__":
     print("Transforming all original datasets...")
+    print(f"Splitting {(1 - TEST_SPLIT) * 100}% for training.")
     print("NOTE: Find resulting data binaries in the data folder.")
 
     total_filtered_datasets = transform_all_datasets()
@@ -610,7 +642,6 @@ if __name__ == "__main__":
     if USE_GENERATED:
         combined_prefix += pre_gen
     random.shuffle(combined_prefix)
-    print(f"Saving {len(combined_prefix)} mwps to train_all_prefix.p")
     to_binary(os.path.join(DIR_PATH, "../train_all_prefix.p"),
               combined_prefix)
 
@@ -618,7 +649,6 @@ if __name__ == "__main__":
     if USE_GENERATED:
         combined_postfix += pos_gen
     random.shuffle(combined_postfix)
-    print(f"Saving {len(combined_postfix)} mwps to train_all_postfix.p")
     to_binary(os.path.join(DIR_PATH, "../train_all_postfix.p"),
               combined_postfix)
 
@@ -629,11 +659,8 @@ if __name__ == "__main__":
     combined_infix = remove_variables(combined_infix)
     if not KEEP_INFIX_PARENTHESIS:
         combined_infix = convert_to(combined_infix, "infix")
-    print(f"Saving {len(combined_infix)} mwps to train_all_infix.p")
     to_binary(os.path.join(DIR_PATH, "../train_all_infix.p"),
               combined_infix)
-
-    print("...done.")
 
     print("\nCreating a small debugging file...")
 

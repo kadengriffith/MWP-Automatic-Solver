@@ -1,5 +1,0 @@
-#!/bin/bash
-
-chmod a+x run && chmod a+x trial && chmod a+x make-data
-
-docker build --rm -t griffith/mwp-automatic-solver .

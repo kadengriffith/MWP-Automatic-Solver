@@ -417,7 +417,7 @@ A car company produced 3884 cars in North America and 2871 cars in Europe . How 
 x = 3884.0 + 2871.0
 Abe 's family moved from the Bahamas to Japan , so they had convert their money into Japanese yen . Their checking account now has 6359 yen and their savings account now has 3485 yen . How many yen do they have ?
 9844
-x = 6359.0 + 3485.0 
+x = 6359.0 + 3485.0
 There are 1986 books in Oak Grove 's public library . In addition , there are 5106 books in its school libraries . How many books do the libraries in Oak Grove have overall ?
 7092
 x = 1986.0 + 5106.0
@@ -542,7 +542,7 @@ A marine biologist measured 1 fish that was 0.3 foot long and a second fish that
 0.1
 x = 0.3 - 0.2
 Hannah 's Vegetarian Restaurant bought 0.3333333333333333 pound of green peppers and 0.3333333333333333 pound of red peppers . How many pounds of peppers did Hannah 's Vegetarian Restaurant buy in all ?
-0.6666666667 
+0.6666666667
 x = 0.3333333333333333 + 0.3333333333333333
 Ella owns 2 dogs . Each day , 1 dog eats 0.125 scoop of dog food and the other dog eats 0.125 scoop . Together , how much dog food do the 2 dogs eat each day ?
 0.25
@@ -562,7 +562,7 @@ x = 0.7 + 0.2
 There is 0.16666666666666666 cup of oil in Scarlett 's measuring cup . If Scarlett adds 0.6666666666666666 cup more , how much oil will be in the measuring cup ?
 0.8333333333
 x = 0.16666666666666666 + 0.6666666666666666
-1 evening , a restaurant served a total of 0.2 loaf of wheat bread and 0.4 loaf of white bread . How many loaves were served in all ? 0.6
+1 evening , a restaurant served a total of 0.2 loaf of wheat bread and 0.4 loaf of white bread . How many loaves were served in all ?
 0.6
 x = 0.2 + 0.4
 Stanley ran 0.4 mile and walked 0.2 mile . How much farther did Stanley run than walk ?
@@ -602,7 +602,7 @@ At the beach , Miki and her sister both built sandcastles and then measured thei
 0.3333333333
 x = 0.8333333333333334 - 0.5
 Michelle began her pizza delivery route with 0.5 tank of gas in her car . When she made it back to the pizzeria , 0.16666666666666666 tank of gas was . How much gas did Michelle use ?
-0.3333333333 
+0.3333333333
 x = 0.5 - 0.16666666666666
 While taking inventory at her pastry shop , Kelly realizes that she had 0.4 box of baking powder yesterday , but the supply is now down to 0.3 box . How much more baking powder did Kelly have yesterday ?
 0.1
@@ -650,13 +650,13 @@ A waitress put leftover tarts into the fridge on Thursday night . She noticed th
 0.9166666667
 x = 0.08333333333333333 + 0.75 + 0.08333333333333333
 On her vacation last summer , Trisha walked all over New York City to buy souvenirs . First , she walked 0.1111111111111111 mile from her hotel to a postcard shop . Then she walked 0.1111111111111111 mile from the postcard shop to a T-shirt shop and 0.6666666666666666 mile from the T-shirt shop back to the hotel . How many miles did Trisha walk in all ?
-0.8888888889 
+0.8888888889
 x = 0.1111111111111111 + 0.1111111111111111 + 0.6666666666666666
 Brandy made trail mix for a backpacking trip . She used 0.16666666666666666 pound of peanuts , 0.16666666666666666 pound of chocolate chips , and 0.08333333333333333 pound of raisins . How many pounds of trail mix did Brandy make ?
 0.4166666667
 x = 0.16666666666666666 + 0.16666666666666666 + 0.08333333333333333
 Allie counted the leftover ice cream after a sundae party . She had 0.3333333333333333 carton of rocky road ice cream , 0.3333333333333333 carton of cookie dough ice cream , and 0.16666666666666666 carton of strawberry cheesecake ice cream . How many cartons of ice cream did Allie have in all ?
-0.8333333333 
+0.8333333333
 x = 0.3333333333333333 + 0.3333333333333333 + 0.16666666666666666
 During a canned food drive , items were sorted into bins . The drive resulted in 0.125 bin of soup , 0.125 bin of vegetables , and 0.5 bin of pasta . Altogether , how many bins would the canned food take up ?
 0.75
@@ -695,19 +695,19 @@ Heather went to the county fair last weekend . When she got there , she had to w
 0.75
 x = 0.3333333333333333 + 0.3333333333333333 + 0.08333333333333333
 A renovation project required 0.16666666666666666 truck-load of sand , 0.3333333333333333 truck-load of dirt , and 0.16666666666666666 truck-load of cement . How many truck-loads of material were needed in all ?
-0.6666666667 
+0.6666666667
 x = 0.16666666666666666 + 0.3333333333333333 + 0.16666666666666666
 Karin 's science class weighed plastic rings for an experiment . They found that the orange ring weighed 0.08333333333333333 ounce , the purple ring weighed 0.3333333333333333 ounce , and the white ring weighed 0.4166666666666667 ounce . What was the total weight of the plastic rings ?
 0.8333333333
 x = 0.08333333333333333 + 0.3333333333333333 + 0.4166666666666667
 Carefully following a recipe , Kenny used exactly 0.16666666666666666 cup of oil and 1.1666666666666667 cups of water . How many cups of liquid did Kenny use in all ?
 1.333333333
-x = 0.16666666666666666 + 1.166666666666666 
+x = 0.16666666666666666 + 1.166666666666666
 Dale 's Vegetarian Restaurant bought 2.8333333333333335 pounds of green peppers and 2.8333333333333335 pounds of red peppers . How many pounds of peppers did Dale 's Vegetarian Restaurant buy in all ?
-5.666666667 
+5.666666667
 x = 2.8333333333333335 + 2.8333333333333335
 This afternoon Craig left school , rode the bus 3.8333333333333335 miles , and then walked 0.16666666666666666 mile to get home . How much farther did Craig ride than walk ?
-3.666666667 
+3.666666667
 x = 3.8333333333333335 - 0.16666666666666666
 Kelly 's chemistry textbook weighs 7.125 pounds and her geometry textbook weighs 0.625 pound . How much more does the chemistry textbook weigh than the geometry textbook ?
 6.5
@@ -725,10 +725,10 @@ A bucket contains 3 gallons of water . If Derek adds 6.8 gallons more , how many
 9.8
 x = 3.0 + 6.8
 At a pizza party , Mason and his friends drank 2.6666666666666665 bottles of lemon-lime soda and 2.6666666666666665 bottles of cola . How much soda did they drink in all ?
-5.333333333 
+5.333333333
 x = 2.6666666666666665 + 2.6666666666666665
 Professor Ellison weighed 2 pieces of metal for an experiment . The piece of iron weighed 11.166666666666666 pounds and the piece of aluminum weighed 0.8333333333333334 pound . How much more did the piece of iron weigh than the piece of aluminum ?
-10.33333333 
+10.33333333
 x = 11.166666666666666 - 0.8333333333333334
 As part of a lesson on earthquakes , a science class is researching the movement of a nearby fault line . The fault line moved 1.25 inches during the past year and 5.25 inches the year before . How far did the fault line move in all ?
 6.5
@@ -749,7 +749,7 @@ A farmer started the day with 8.75 buckets of seeds . After spending the morning
 2.75
 x = 8.75 - 6.0
 Irene just bought a new lamp for her bedside table . The old lamp was 1 foot tall and the new lamp is 2.3333333333333335 feet tall . How much taller is the new lamp than the old lamp ?
-1.333333333 
+1.333333333
 x = 2.3333333333333335 - 1
 Ezra drew a white line that was 7.666666666666667 inches long . Then he drew a blue line that was 3.3333333333333335 inches long . How much longer was the white line than the blue line ?
 4.333333333

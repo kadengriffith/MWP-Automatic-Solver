@@ -1,0 +1,30 @@
+dataset: train_all_postfix.p
+duplication: False
+test: postfix
+# Model specification
+model: False
+layers: 2
+heads: 8
+d_model: 256
+dff: 1024
+lr: scheduled
+dropout: 0.1
+# Training
+epochs: 300
+batch: 128
+# Options: "dolphin", "imdb", "wikipedia_en_DUMPNUM"
+pretrain: false
+# Adam optimizer params
+beta_1: 0.95
+beta_2: 0.99
+# Data pre-processing
+pos: False
+pos_words: False
+remove_stopwords: False
+as_lemmas: False
+reorder: False
+tagging: lst
+# Other behavior
+input: False
+seed: 420365
+save: True
