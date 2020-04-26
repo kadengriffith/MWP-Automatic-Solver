@@ -1,6 +1,6 @@
 ![University of Colorado Colorado Springs](https://github.com/kadengriffith/MWP-Automatic-Solver/blob/master/data/util/UCCS.png)
 
-# MWP Automatic Solver
+# MWP Automatic Solver v2.0.0
 
 ---
 
@@ -23,7 +23,7 @@ For consistency, we provide a ready-to-use Docker image in this repo. To downloa
 Build the Docker image by:
 
 ```
-chmod a+x build-docker && ./build-docker.sh
+chmod a+x build-docker.sh && ./build-docker.sh
 ```
 
 OR
