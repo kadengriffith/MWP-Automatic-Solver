@@ -1,6 +1,6 @@
 ![University of Colorado Colorado Springs](https://github.com/kadengriffith/MWP-Automatic-Solver/blob/master/data/util/UCCS.png)
 
-# MWP Automatic Solver
+# MWP Automatic Solver v1.0.0
 
 ---
 
